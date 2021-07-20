@@ -109,7 +109,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 } 
                 let playerRedPiece = []
-                let startPositionRed = 1
+                let startPositionRed = 0
                 for(let i = 0; i < 4; i++){
                     playerRedPiece[i] = new Piece(this.color, startPositionRed)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 1`)
@@ -121,7 +121,7 @@ class Player {
             // object mode does not work yet
             case 'blue' :
                 let playerBluePiece = {}
-                let startPositionBlue = 9
+                let startPositionBlue = 8
                 for (let i = 1; i <= 4; i++) {
                     playerBluePiece.piece[i] =  new Piece(this.color, startPositionBlue) 
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 9`)
@@ -208,18 +208,34 @@ class Game {
 
 }
 
+function checkIfGameHasStarted(testGame) {
+    if(testGame.currentTurn === undefined){
+        alert('please add at least a player to roll the dices')
+    }else{
+        return true
+    }
+}
 
 
-// function drawPiecesThatFinished(testGame){
-    
-//     let redFinishLine = document.getElementById('red-finish-line')
-//     testGame.red.pieces.forEach(piece = () => {
-//         if(piece.crossedFinishLine){
-//             let finishedPiece = document.createElement('div').classList.add('class="h-6 w-6 bg-red-700 rounded-full flex items-center justify-center')
-//             return redFinishLine += finishedPiece
-//         }
-//     })
-// }
+
+function drawPiecesThatFinished(testGame){
+    // check if player has 4 pieces in Finish Line and declare him the winner
+
+    if (testGame.red.finishedPieces >= 4){
+        setTimeout(function(){
+
+            alert(`we have a winner and is ${testGame.red.color}`)
+        }, 1000) 
+    }
+    let redFinishLine = document.getElementById('red-finish-line')
+    for(let i = 0; i < testGame.red.finishedPieces; i++){
+    //    let finishedPiece = document.createElement('div')
+             finishedPiece = `<div class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white"></div>`
+    //     return redFinishLine += finishedPiece
+        return redFinishLine.innerHTML +=  finishedPiece
+
+    }
+}
 
 // movePiece()
 function movePiece(id){
@@ -238,8 +254,10 @@ function movePiece(id){
             destination.innerHTML = newBtn
         }else{
             console.log('crossed the line')
-            return  testGame.red.finishedPieces += 1
+            testGame.red.finishedPieces += 1
+            drawPiecesThatFinished(testGame)
         }
+        console.log('crossed the line second')
         return testGame.red.pieces[index].currentPosition = i
 
     
@@ -269,10 +287,10 @@ players.addEventListener('click', () => {
                         ${redP.name} - Team McQueen
                     </div>
                     <div class="flex">
-                        <button id="red-piece-1"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
-                        <button id="red-piece-2"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
-                        <button id="red-piece-3"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
-                        <button id="red-piece-4"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
+                        <button id="red-piece-0"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
+                        <button id="red-piece-1"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
+                        <button id="red-piece-2"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
+                        <button id="red-piece-3"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
                     </div>
                 </div>`
 
@@ -295,6 +313,7 @@ players.addEventListener('click', () => {
 
 let pop = document.getElementById('pop-o-matic')
 pop.addEventListener('click', () =>{
+    if(checkIfGameHasStarted(testGame)){   
     throwDices()
     addDices()
 
@@ -327,6 +346,7 @@ pop.addEventListener('click', () =>{
             pop.classList.remove('bg-green-500')
             pop.classList.add('bg-' + testGame.currentTurn + '-500')
         break
+    }
     }
 })
 
