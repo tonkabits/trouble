@@ -60,21 +60,23 @@ function throwDices() {
 
 // user see results of the dice throw and pick which piece to move
 function addDices() {
+    let color = testGame.currentTurn
+    console.log('color:'+ color)
+    console.log('testGame.colo:'+testGame[color].lastThrow)
     if(typeof(testGame.dice2) === 'number'){
         console.log('dices are numbers')
         let sum = testGame.dice1 + testGame.dice2
-        testGame.red.lastThrow = sum
+        testGame[color].lastThrow = sum
 
     }else if(testGame.dice2 === 'Miss Fritter'){
         console.log(`we have ${testGame.dice1} plus ${testGame.dice2}`)
-        testGame.red.lastThrow = testGame.dice1
-        testGame.red.hasMissFritter = true
+        testGame[color].lastThrow = testGame.dice1
+        testGame[color].hasMissFritter = true
     } else if (testGame.dice2 === 'Roadblock'){
         console.log('roadblock')
-        if(testGame.red.hasMissFritter){
-            testGame.red.lastThrow = testGame.dice1
+        if(testGame[color].hasMissFritter){
+            testGame[color].lastThrow = testGame.dice1
         }else{
-            testGame.currentTurn = 'blue'
             console.log('you miss a turn')
             // i need to make a cycle logic to acomodate for colors schedule
             // goToNextPlayer()
@@ -104,7 +106,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 } 
                 let playerRedPiece = []
-                let startPositionRed = 0
+                let startPositionRed = 1
                 for(let i = 0; i < 4; i++){
                     playerRedPiece[i] = new Piece(this.color, startPositionRed)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -123,7 +125,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 }
                 let playerBluePiece = []
-                let startPositionBlue = 8
+                let startPositionBlue = 9
                 for(let i = 0; i < 4; i++){
                     playerBluePiece[i] = new Piece(this.color, startPositionBlue)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -142,7 +144,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 }
                 let playerYellowPiece = []
-                let startPositionYellow = 8
+                let startPositionYellow = 17
                 for (let i = 0; i < 4; i++) {
                     playerYellowPiece[i] = new Piece(this.color, startPositionYellow)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -161,7 +163,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 }
                 let playerGreenPiece = []
-                let startPositionGreen = 8
+                let startPositionGreen = 25
                 for (let i = 0; i < 4; i++) {
                     playerGreenPiece[i] = new Piece(this.color, startPositionGreen)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -196,15 +198,6 @@ class Piece {
 //  console.log(testPlayer)
 
 
-let boardGame = {
-    currentTurn: 'blue',
-    1: 'empty',
-    2: 'empty',
-    3: 'empty',
-    4: 'empty',
-    5: 'empty',
-    6: 'empty'
-}
 
 // if current turn blue make pop-O-matic blue
 // throw dices
@@ -220,7 +213,7 @@ class Game {
 
     makeBoard(){
         let boardGame = {}
-        boardGame.currentTurn = 'red'
+        boardGame.currentTurn = ''
         boardGame.blocks = []
         for(let i = 1; i <= 32; i++){
             boardGame.blocks[i] = 'emptyss'
@@ -262,27 +255,30 @@ function drawPiecesThatFinished(testGame){
 }
 
 // movePiece() currently only move red pieces, color of the piece needs to be passed dinamically
-function movePiece(id){
-    // alert(`piece is moving ${id}`)
+function movePiece(id, color){
+    alert(`piece is moving ${id} ${color} ${testGame[color].pieces[0].currentPosition}`)
     // console.log(`test generate inside ${redP}`)
-
-        console.log(`test game inside ${testGame.boardGame}`)
+        
+        console.log(`test game inside ${testGame[color]} ${color}`)
         let btn = document.getElementById(`${id}`)
+
         btn.remove()
         let index = id.slice(-1);// pick the number portion of the id of the dom element we are targeting
-        let prev = testGame.red.pieces[index].currentPosition
-        let i = testGame.red.lastThrow + prev
-        if(i < 32){
+        let prev = testGame[color].pieces[index].currentPosition
+        let i = testGame[color].lastThrow + prev
+
+
+        if(i < 33){
             let destination = document.getElementById(`${i}`)
-            let newBtn = `<button id="${id}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'></button>`
+            let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
             destination.innerHTML = newBtn
         }else{
             console.log('crossed the line')
-            testGame.red.finishedPieces += 1
+            testGame[color].finishedPieces += 1
             drawPiecesThatFinished(testGame)
         }
         console.log('crossed the line second')
-        return testGame.red.pieces[index].currentPosition = i
+        return testGame[color].pieces[index].currentPosition = i
 
     
 
@@ -321,10 +317,10 @@ players.addEventListener('click', () => {
                     ${player.name} - Team Name
                     </div >
                     <div class="flex">
-                        <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
-                    <button id="${player.color}-piece-1" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
-                    <button id="${player.color}-piece-2" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
-                        <button id="${player.color}-piece-3" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
+                        <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>1</button>
+                    <button id="${player.color}-piece-1" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>2</button>
+                    <button id="${player.color}-piece-2" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>3</button>
+                        <button id="${player.color}-piece-3" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>4</button>
                     </div>
                 </div >`
                 playerPits.innerHTML = playerHtmlHorizontal
@@ -337,113 +333,45 @@ players.addEventListener('click', () => {
                          ${player.name} - Team Name
                      </div>
                      <div class="flex flex-col">
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>1</button>
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>2</button>
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>3</button>
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>4</button>
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>1</button>
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>2</button>
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>3</button>
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>4</button>
                      </div>
                  </div>`
                 playerPits.innerHTML = playerHtmlVertical
                 break
-            }
+            }   
             
-  
-            
-           
         }
 
-    console.log(colorOrder)
-    testGame.colorOrder = colorOrder
-    
-}
-console.log('color order'+ testGame.colorOrder)
-
-    // we initialize the active players
-
-
-    // let playersDom = document.querySelectorAll('.players')
-    // playersDom.forEach(player = () =>{
-    //      let player =  new Player(player.color, player.value)
-    //      testGame[player.color] = player.make()
-    // })
-    // let playerHtml = `<div class="flex flex-col">
-                // < div class="text-xl text-center" >
-                //     ${player.name } - Team Name
-                //             </div >
-                // <div class="flex">
-                //     <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
-                //     <button id="${player.color}-piece-1" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
-                //     <button id="${player.color}-piece-2" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
-                //     <button id="${player.color}-piece-3" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
-                // </div>
-                // </div >`
-    // let pitsIdString = player.color +'-pits'
-    // let playerPits = document.getElementById(pitsIdString)
-    // playerPits.innerHTML = playerHtml
-
-
-    // let redPlayerName = document.getElementById('redplayer')
-    // if(redPlayerName && redPlayerName.value){
-    //     let redP = new Player('red', redPlayerName.value )
-    //     redP = redP.make()
-    //     testGame.red = redP
-    //     console.log({redP})
-    //     console.log(redP.name)
-
-    //     let redPiecesHtml = `<div class="flex flex-col">
-    //                 <div class="text-xl text-center">
-    //                     ${redP.name} - Team McQueen
-    //                 </div>
-    //                 <div class="flex">
-    //                     <button id="red-piece-0"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
-    //                     <button id="red-piece-1"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
-    //                     <button id="red-piece-2"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
-    //                     <button id="red-piece-3"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
-    //                 </div>
-    //             </div>`
-
-    //     let redPits = document.getElementById('red-pits')
-    //     redPits.innerHTML = redPiecesHtml
-    //     // console.log(redP.color)
-    //     return redP
-    // }else{
-    //     console.log('this is null')
-    // }
-
-    // let bluePlayerName = document.getElementById('blueplayer')
-    // if (bluePlayerName && bluePlayerName.value) {
-    //     let blueP = new Player('blue', bluePlayerName.value)
-    //     blueP = blueP.make()
-    //     testGame.blue = blueP
-    //     console.log({ blueP })
-    //     console.log(blueP.name)
-
-    //     let bluePiecesHtml = `<div class="flex flex-col">
-    //                 <div class="text-xl text-center rotate-180">
-    //                     ${blueP.name} - Team The King
-    //                 </div>
-    //                 <div class="flex flex-col">
-    //                     <button id="blue-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>1</button>
-    //                     <button id="blue-piece-1" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>2</button>
-    //                     <button id="blue-piece-2" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>3</button>
-    //                     <button id="blue-piece-3" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>4</button>
-    //                 </div>
-    //             </div>`
-
-    //     let bluePits = document.getElementById('blue-pits')
-    //     bluePits.innerHTML = bluePiecesHtml
-    //     // console.log(redP.color)
-    //     return blueP
-    // } else {
-    //     console.log('this is null')
-    // }
-
-    // let yellowPlayerName = document.getElementById('yellowplayer').value
-    // let greenPlayerName = document.getElementById('greenplayer').value
-    // console.log(redPlayerName, bluePlayerName, yellowPlayerName, greenPlayerName)
-    
+        console.log(colorOrder)
+        testGame.colorOrder = colorOrder
+        
+    }
+    console.log('color order'+ testGame.colorOrder)
+    setPopActiveColor() //no need for it now
     return testGame
 })
+
+// sets the active color
+function setPopActiveColor(){
+    testGame.currentTurn = testGame.colorOrder[0]
+}
+
+// reads the current color and picks the next one, if is the last of the array jumps back to index-0
+function getPopNextColor(){
+
+    let i = testGame.colorOrder.indexOf(testGame.currentTurn)
+    if (i + 1 < testGame.colorOrder.length ){
+        i++
+        testGame.currentTurn = testGame.colorOrder[i]
+        
+    }else{
+        testGame.currentTurn = testGame.colorOrder[0]
+    }
+
+}
 
 // pop-O-matic button action
 let pop = document.getElementById('pop-o-matic')
@@ -451,37 +379,48 @@ pop.addEventListener('click', () =>{
     if(checkIfGameHasStarted(testGame)){   
     throwDices()
     addDices()
-
+    getPopNextColor()
+    let colorTurn = 'bg-' + testGame.currentTurn + '-500'
     switch(testGame.currentTurn){
         case 'red':
-            console.log('do red turn logic')
-            testGame.currentTurn = 'blue'
-            pop.classList.remove('bg-red-500')
-            pop.classList.add('bg-' + testGame.currentTurn + '-500')
+
+         
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+            'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+             'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
+            
 
         break
         case 'blue':
-       
-            console.log('do blue turn logic')
-            testGame.currentTurn = 'yellow'
-            pop.classList.remove('bg-blue-500')
-            pop.classList.add('bg-' + testGame.currentTurn + '-500')
+           
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
         break
         case 'yellow':
-      
-            console.log('do yellow turn logic')
-            testGame.currentTurn = 'green'
-            pop.classList.remove('bg-yellow-500')
-            pop.classList.add('bg-' + testGame.currentTurn + '-500')
+           
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
             break
         case 'green':
       
-            console.log('do green turn logic')
-            testGame.currentTurn = 'red'
-            pop.classList.remove('bg-green-500')
-            pop.classList.add('bg-' + testGame.currentTurn + '-500')
+   
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
         break
     }
+    
+    
     }
 })
 
