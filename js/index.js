@@ -111,7 +111,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 } 
                 let playerRedPiece = []
-                let startPositionRed = 1
+                let startPositionRed = 0
                 for(let i = 0; i < 4; i++){
                     playerRedPiece[i] = new Piece(this.color, startPositionRed)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -130,7 +130,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 }
                 let playerBluePiece = []
-                let startPositionBlue = 9
+                let startPositionBlue = 8
                 for(let i = 0; i < 4; i++){
                     playerBluePiece[i] = new Piece(this.color, startPositionBlue)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -149,7 +149,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 }
                 let playerYellowPiece = []
-                let startPositionYellow = 17
+                let startPositionYellow = 16
                 for (let i = 0; i < 4; i++) {
                     playerYellowPiece[i] = new Piece(this.color, startPositionYellow)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -168,7 +168,7 @@ class Player {
                     finishedPieces: this.finishedPieces
                 }
                 let playerGreenPiece = []
-                let startPositionGreen = 25
+                let startPositionGreen = 24
                 for (let i = 0; i < 4; i++) {
                     playerGreenPiece[i] = new Piece(this.color, startPositionGreen)
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
@@ -261,27 +261,36 @@ function drawPiecesThatFinished(testGame){
 
 // movePiece() currently only move red pieces, color of the piece needs to be passed dinamically
 function movePiece(id, color){
-    alert(`piece is moving ${id} ${color} ${testGame[color].pieces[0].currentPosition}`)
+    alert(`piece is moving of ID: ${id} and color ${color} and has a current position of ${testGame[color].pieces[0].currentPosition}`)
     // console.log(`test generate inside ${redP}`)
         
         console.log(`test game inside ${testGame[color]} ${color}`)
         let btn = document.getElementById(`${id}`)
-
+        console.log(`id:${id}`)
         btn.remove()
         let index = id.slice(-1);// pick the number portion of the id of the dom element we are targeting
-        let prev = testGame[color].pieces[index].currentPosition
-        let i = testGame[color].lastThrow + prev
+        let pieceCurrentPosition = testGame[color].pieces[index].currentPosition
+        let i = testGame[color].lastThrow + pieceCurrentPosition
+        let lastThrow = testGame[color].lastThrow
+        console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i)
 
-
-        if(i < 33){
+        if(i >= 33){
+            i = Math.abs(pieceCurrentPosition - 32)
             let destination = document.getElementById(`${i}`)
             let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
             destination.innerHTML = newBtn
-        }else{
-            console.log('crossed the line')
-            testGame[color].finishedPieces += 1
-            drawPiecesThatFinished(testGame)
+        }else if(i < 33){
+            let destination = document.getElementById(`${i}`)
+            let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
+            destination.innerHTML = newBtn
         }
+        
+        // for later to count how many spaces are between startingPosition and if bigger than 32 (full round) add it to the finish line and tick one 
+        // else{
+        //     console.log('crossed the line')
+        //     testGame[color].finishedPieces += 1
+        //     drawPiecesThatFinished(testGame)
+        // }
         console.log('crossed the line second')
         return testGame[color].pieces[index].currentPosition = i
 
@@ -339,9 +348,9 @@ players.addEventListener('click', () => {
                      </div>
                      <div class="flex flex-col">
                          <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>1</button>
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>2</button>
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>3</button>
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>4</button>
+                         <button id="${player.color}-piece-1" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>2</button>
+                         <button id="${player.color}-piece-2" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>3</button>
+                         <button id="${player.color}-piece-3" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>4</button>
                      </div>
                  </div>`
                 playerPits.innerHTML = playerHtmlVertical
@@ -364,12 +373,14 @@ function setPopActiveColor(){
 
     testGame.currentTurn = testGame.colorOrder[0]//should work like this but it doesnt
     let pop = document.getElementById('pop-o-matic')
-    let colorTurn = 'bg-' + testGame.currentTurn + '-500'
+    let colorTurn = 'bg-red-500'
     pop.classList = ''
     pop.classList.add('center', 'flex', 'flex-col', 'w-24',
         'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
         'font-extrabold', 'text-white', 'uppercase', 'items-center',
         'justify-center', colorTurn)
+    
+    
     // let i = testGame.colorOrder.length -1
     // testGame.currentTurn = testGame.colorOrder[i]//last of arr
 
@@ -393,52 +404,52 @@ function getPopNextColor(){
 let pop = document.getElementById('pop-o-matic')
 pop.addEventListener('click', () =>{
     if(checkIfGameHasStarted(testGame)){   
+        let colorTurn = 'bg-' + testGame.currentTurn + '-500'
+        switch(testGame.currentTurn){
+            case 'red':
+    
+             
+                pop.classList = ''
+                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                 'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                    'justify-center', colorTurn)
+                
+                
+    
+            break
+            case 'blue':
+               
+                pop.classList = ''
+                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                    'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                    'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                    'justify-center', colorTurn)
+                  
+            break
+            case 'yellow':
+               
+                pop.classList = ''
+                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                    'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                    'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                    'justify-center', colorTurn)
+                    
+                break
+            case 'green':
+          
+       
+                pop.classList = ''
+                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                    'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                    'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                    'justify-center', colorTurn)
+                    
+            break
+        }
     throwDices()
     addDices()
     getPopNextColor()
-    let colorTurn = 'bg-' + testGame.currentTurn + '-500'
-    switch(testGame.currentTurn){
-        case 'red':
-
-         
-            pop.classList = ''
-            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-            'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-             'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                'justify-center', colorTurn)
-            
-            
-
-        break
-        case 'blue':
-           
-            pop.classList = ''
-            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-                'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                'justify-center', colorTurn)
-              
-        break
-        case 'yellow':
-           
-            pop.classList = ''
-            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-                'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                'justify-center', colorTurn)
-                
-            break
-        case 'green':
-      
-   
-            pop.classList = ''
-            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-                'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                'justify-center', colorTurn)
-                
-        break
-    }
     
     
     }
