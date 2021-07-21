@@ -63,25 +63,30 @@ function addDices() {
     let color = testGame.currentTurn
     console.log('color:'+ color)
     console.log('testGame.colo:'+testGame[color].lastThrow)
-    if(typeof(testGame.dice2) === 'number'){
-        console.log('dices are numbers')
-        let sum = testGame.dice1 + testGame.dice2
-        testGame[color].lastThrow = sum
 
-    }else if(testGame.dice2 === 'Miss Fritter'){
-        console.log(`we have ${testGame.dice1} plus ${testGame.dice2}`)
-        testGame[color].lastThrow = testGame.dice1
-        testGame[color].hasMissFritter = true
-    } else if (testGame.dice2 === 'Roadblock'){
-        console.log('roadblock')
-        if(testGame[color].hasMissFritter){
-            testGame[color].lastThrow = testGame.dice1
-        }else{
-            console.log('you miss a turn')
-            // i need to make a cycle logic to acomodate for colors schedule
-            // goToNextPlayer()
-        }
-    }
+    
+    
+    let sum = testGame.dice1
+    testGame[color].lastThrow = sum
+    // if(typeof(testGame.dice2) === 'number'){
+    //     console.log('dices are numbers')
+    //     let sum = testGame.dice1 + testGame.dice2
+    //     testGame[color].lastThrow = sum
+
+    // }else if(testGame.dice2 === 'Miss Fritter'){
+    //     console.log(`we have ${testGame.dice1} plus ${testGame.dice2}`)
+    //     testGame[color].lastThrow = testGame.dice1
+    //     testGame[color].hasMissFritter = true
+    // } else if (testGame.dice2 === 'Roadblock'){
+    //     console.log('roadblock')
+    //     if(testGame[color].hasMissFritter){
+    //         testGame[color].lastThrow = testGame.dice1
+    //     }else{
+    //         console.log('you miss a turn')
+    //         // i need to make a cycle logic to acomodate for colors schedule
+    //         // goToNextPlayer()
+    //     }
+    // }
 }
 
 
@@ -354,9 +359,20 @@ players.addEventListener('click', () => {
     return testGame
 })
 
-// sets the active color
+// sets the active color when the board is first created
 function setPopActiveColor(){
-    testGame.currentTurn = testGame.colorOrder[0]
+
+    testGame.currentTurn = testGame.colorOrder[0]//should work like this but it doesnt
+    let pop = document.getElementById('pop-o-matic')
+    let colorTurn = 'bg-' + testGame.currentTurn + '-500'
+    pop.classList = ''
+    pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+        'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+        'font-extrabold', 'text-white', 'uppercase', 'items-center',
+        'justify-center', colorTurn)
+    // let i = testGame.colorOrder.length -1
+    // testGame.currentTurn = testGame.colorOrder[i]//last of arr
+
 }
 
 // reads the current color and picks the next one, if is the last of the array jumps back to index-0
@@ -391,6 +407,7 @@ pop.addEventListener('click', () =>{
              'font-extrabold', 'text-white', 'uppercase', 'items-center',
                 'justify-center', colorTurn)
             
+            
 
         break
         case 'blue':
@@ -400,6 +417,7 @@ pop.addEventListener('click', () =>{
                 'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
                 'font-extrabold', 'text-white', 'uppercase', 'items-center',
                 'justify-center', colorTurn)
+              
         break
         case 'yellow':
            
@@ -408,6 +426,7 @@ pop.addEventListener('click', () =>{
                 'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
                 'font-extrabold', 'text-white', 'uppercase', 'items-center',
                 'justify-center', colorTurn)
+                
             break
         case 'green':
       
@@ -417,6 +436,7 @@ pop.addEventListener('click', () =>{
                 'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
                 'font-extrabold', 'text-white', 'uppercase', 'items-center',
                 'justify-center', colorTurn)
+                
         break
     }
     
