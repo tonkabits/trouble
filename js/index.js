@@ -10,7 +10,7 @@ let testGame = {}
 
 
 
-// this function will require the users to double check they want to refresh
+// this function will require the users to double check they want to refresh so we dont lose the current game
     // window.onbeforeunload = function (event) {
     //     return confirm("Confirm refresh");
     // };
@@ -49,7 +49,6 @@ function throwDices() {
     let dice2 = new SpecialDice
     dice2 = dice2.roll()
 
-
     let dice1dom = document.getElementById('dice1dom')
     let dice2dom = document.getElementById('dice2dom')
     dice1dom.innerHTML = dice1
@@ -60,9 +59,6 @@ function throwDices() {
 }
 
 // user see results of the dice throw and pick which piece to move
-
-
-
 function addDices() {
     if(typeof(testGame.dice2) === 'number'){
         console.log('dices are numbers')
@@ -88,7 +84,6 @@ function addDices() {
 
 
 
-
 class Player {
     constructor(color, name) {
         this.color = color,
@@ -98,7 +93,7 @@ class Player {
         this.finishedPieces = 0
     }
     make(){
-        // if this color === red 
+        // makes red player
         switch(this.color){
             case 'red' :
                 let redPlayer = {
@@ -112,22 +107,67 @@ class Player {
                 let startPositionRed = 0
                 for(let i = 0; i < 4; i++){
                     playerRedPiece[i] = new Piece(this.color, startPositionRed)
-                    // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 1`)
+                    // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
                 }
                 redPlayer.pieces = playerRedPiece
                 return redPlayer
             break
 
-            // object mode does not work yet
+            // makes blue player
             case 'blue' :
-                let playerBluePiece = {}
-                let startPositionBlue = 8
-                for (let i = 1; i <= 4; i++) {
-                    playerBluePiece.piece[i] =  new Piece(this.color, startPositionBlue) 
-                    // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 9`)
-                   
+                let bluePlayer = {
+                    color: this.color,
+                    name: this.name,
+                    hasMissFritter: this.hasMissFritter,
+                    lastThrow: this.lastThrow,
+                    finishedPieces: this.finishedPieces
                 }
-                return playerBluePiece
+                let playerBluePiece = []
+                let startPositionBlue = 8
+                for(let i = 0; i < 4; i++){
+                    playerBluePiece[i] = new Piece(this.color, startPositionBlue)
+                    // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
+                }
+                bluePlayer.pieces = playerBluePiece
+                return bluePlayer
+            break
+
+            // makes yellow player
+            case 'yellow':
+                let yellowPlayer = {
+                    color: this.color,
+                    name: this.name,
+                    hasMissFritter: this.hasMissFritter,
+                    lastThrow: this.lastThrow,
+                    finishedPieces: this.finishedPieces
+                }
+                let playerYellowPiece = []
+                let startPositionYellow = 8
+                for (let i = 0; i < 4; i++) {
+                    playerYellowPiece[i] = new Piece(this.color, startPositionYellow)
+                    // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
+                }
+                yellowPlayer.pieces = playerYellowPiece
+                return yellowPlayer
+            break
+
+            // makes green player
+            case 'green':
+                let greenPlayer = {
+                    color: this.color,
+                    name: this.name,
+                    hasMissFritter: this.hasMissFritter,
+                    lastThrow: this.lastThrow,
+                    finishedPieces: this.finishedPieces
+                }
+                let playerGreenPiece = []
+                let startPositionGreen = 8
+                for (let i = 0; i < 4; i++) {
+                    playerGreenPiece[i] = new Piece(this.color, startPositionGreen)
+                    // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
+                }
+                greenPlayer.pieces = playerGreenPiece
+                return greenPlayer
             break
         }
     } 
@@ -174,9 +214,8 @@ let boardGame = {
 
 
 class Game {
-    constructor(numberOfPlayers){
-        this.numberOfPlayers = numberOfPlayers
-
+    constructor(){
+        this.colorOrder = []
     }
 
     makeBoard(){
@@ -189,21 +228,6 @@ class Game {
         boardGame.blocks.shift() //remove first item of the array to make just 32 
         return boardGame
     }
-
-    start() {
-        for(let i = 0; i < this.numberOfPlayers; i++){
-          let Game = new Player(color, name)
-        }
-    }
-
-    makePlayer() {
-
-    }
-
-    hasWinner(){
-        // if any player has four pieces in the finish line make him the Winner
-    }
-
 
 
 }
@@ -230,14 +254,14 @@ function drawPiecesThatFinished(testGame){
     let redFinishLine = document.getElementById('red-finish-line')
     for(let i = 0; i < testGame.red.finishedPieces; i++){
     //    let finishedPiece = document.createElement('div')
-             finishedPiece = `<div class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white"></div>`
+        finishedPiece = `<div class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white"><img src="./assets/trophy-solid.svg" class="w-4 h-4"></div>`
     //     return redFinishLine += finishedPiece
         return redFinishLine.innerHTML +=  finishedPiece
 
     }
 }
 
-// movePiece()
+// movePiece() currently only move red pieces, color of the piece needs to be passed dinamically
 function movePiece(id){
     // alert(`piece is moving ${id}`)
     // console.log(`test generate inside ${redP}`)
@@ -265,52 +289,163 @@ function movePiece(id){
 
 }
 
+// startgame button action
 let players = document.getElementById('startgame')
 players.addEventListener('click', () => {
 
     // we initialize the game board
     testGame = new Game
     testGame = testGame.makeBoard()
-    console.log('start clicked')
-    console.log({ testGame })
-    // we initialize the active players
-    let redPlayerName = document.getElementById('redplayer')
-    if(redPlayerName && redPlayerName.value){
-        let redP = new Player('red', redPlayerName.value )
-        redP = redP.make()
-        testGame.red = redP
-        console.log({redP})
-        console.log(redP.name)
+    
+    let playersDom = document.querySelectorAll('.players')
+    console.log(playersDom)
 
-        let redPiecesHtml = `<div class="flex flex-col">
+    // color order variable to be pushed to the Game Object
+    let colorOrder = []
+    for(let i = 0; i < playersDom.length; i++){
+        console.log(playersDom[i].value)
+        let color = playersDom[i].getAttribute('color')
+        if (playersDom[i].value){
+            colorOrder.push(color)
+            let player = new Player(color, playersDom[i].value)
+            testGame[color] = player.make()
+ 
+            let pitsIdString = player.color + '-pits'
+            let playerPits = document.getElementById(pitsIdString)
+            // chorizo de HTML
+            switch(color){
+                case 'red':
+                case 'yellow':
+                let playerHtmlHorizontal = `<div class="flex flex-col min-h-32">
                     <div class="text-xl text-center">
-                        ${redP.name} - Team McQueen
-                    </div>
+                    ${player.name} - Team Name
+                    </div >
                     <div class="flex">
-                        <button id="red-piece-0"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
-                        <button id="red-piece-1"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
-                        <button id="red-piece-2"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
-                        <button id="red-piece-3"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
+                        <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
+                    <button id="${player.color}-piece-1" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
+                    <button id="${player.color}-piece-2" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
+                        <button id="${player.color}-piece-3" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
                     </div>
-                </div>`
+                </div >`
+                playerPits.innerHTML = playerHtmlHorizontal
+                break
 
-        let redPits = document.getElementById('red-pits')
-        redPits.innerHTML = redPiecesHtml
-        // console.log(redP.color)
-        return redP
-    }else{
-        console.log('this is null')
-    }
+                case 'blue':
+                case 'green':
+                let playerHtmlVertical = `<div class="flex flex-col">
+                    <div class="text-xl text-center rotate-180">
+                         ${player.name} - Team Name
+                     </div>
+                     <div class="flex flex-col">
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>1</button>
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>2</button>
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>3</button>
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id)'>4</button>
+                     </div>
+                 </div>`
+                playerPits.innerHTML = playerHtmlVertical
+                break
+            }
+            
+  
+            
+           
+        }
 
-    let bluePlayerName = document.getElementById('blueplayer').value
-    let yellowPlayerName = document.getElementById('yellowplayer').value
-    let greenPlayerName = document.getElementById('greenplayer').value
-    console.log(redPlayerName, bluePlayerName, yellowPlayerName, greenPlayerName)
+    console.log(colorOrder)
+    testGame.colorOrder = colorOrder
+    
+}
+console.log('color order'+ testGame.colorOrder)
+
+    // we initialize the active players
+
+
+    // let playersDom = document.querySelectorAll('.players')
+    // playersDom.forEach(player = () =>{
+    //      let player =  new Player(player.color, player.value)
+    //      testGame[player.color] = player.make()
+    // })
+    // let playerHtml = `<div class="flex flex-col">
+                // < div class="text-xl text-center" >
+                //     ${player.name } - Team Name
+                //             </div >
+                // <div class="flex">
+                //     <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
+                //     <button id="${player.color}-piece-1" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
+                //     <button id="${player.color}-piece-2" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
+                //     <button id="${player.color}-piece-3" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
+                // </div>
+                // </div >`
+    // let pitsIdString = player.color +'-pits'
+    // let playerPits = document.getElementById(pitsIdString)
+    // playerPits.innerHTML = playerHtml
+
+
+    // let redPlayerName = document.getElementById('redplayer')
+    // if(redPlayerName && redPlayerName.value){
+    //     let redP = new Player('red', redPlayerName.value )
+    //     redP = redP.make()
+    //     testGame.red = redP
+    //     console.log({redP})
+    //     console.log(redP.name)
+
+    //     let redPiecesHtml = `<div class="flex flex-col">
+    //                 <div class="text-xl text-center">
+    //                     ${redP.name} - Team McQueen
+    //                 </div>
+    //                 <div class="flex">
+    //                     <button id="red-piece-0"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>1</button>
+    //                     <button id="red-piece-1"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>2</button>
+    //                     <button id="red-piece-2"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>3</button>
+    //                     <button id="red-piece-3"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id)'>4</button>
+    //                 </div>
+    //             </div>`
+
+    //     let redPits = document.getElementById('red-pits')
+    //     redPits.innerHTML = redPiecesHtml
+    //     // console.log(redP.color)
+    //     return redP
+    // }else{
+    //     console.log('this is null')
+    // }
+
+    // let bluePlayerName = document.getElementById('blueplayer')
+    // if (bluePlayerName && bluePlayerName.value) {
+    //     let blueP = new Player('blue', bluePlayerName.value)
+    //     blueP = blueP.make()
+    //     testGame.blue = blueP
+    //     console.log({ blueP })
+    //     console.log(blueP.name)
+
+    //     let bluePiecesHtml = `<div class="flex flex-col">
+    //                 <div class="text-xl text-center rotate-180">
+    //                     ${blueP.name} - Team The King
+    //                 </div>
+    //                 <div class="flex flex-col">
+    //                     <button id="blue-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>1</button>
+    //                     <button id="blue-piece-1" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>2</button>
+    //                     <button id="blue-piece-2" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>3</button>
+    //                     <button id="blue-piece-3" class="w-6 md:h-12 h-6 md:w-12 bg-blue-500 rounded-full text-white" onclick='movePiece(this.id)'>4</button>
+    //                 </div>
+    //             </div>`
+
+    //     let bluePits = document.getElementById('blue-pits')
+    //     bluePits.innerHTML = bluePiecesHtml
+    //     // console.log(redP.color)
+    //     return blueP
+    // } else {
+    //     console.log('this is null')
+    // }
+
+    // let yellowPlayerName = document.getElementById('yellowplayer').value
+    // let greenPlayerName = document.getElementById('greenplayer').value
+    // console.log(redPlayerName, bluePlayerName, yellowPlayerName, greenPlayerName)
     
     return testGame
 })
 
-
+// pop-O-matic button action
 let pop = document.getElementById('pop-o-matic')
 pop.addEventListener('click', () =>{
     if(checkIfGameHasStarted(testGame)){   
@@ -350,8 +485,3 @@ pop.addEventListener('click', () =>{
     }
 })
 
-
-// testGame.currentTurn = 'blue'
-
-
-// console.log({testGame})
