@@ -185,6 +185,7 @@ class Piece {
         this.color = color,
         this.startPosition = startPosition,
         this.currentPosition = startPosition
+        this.hasLooped = false
         
     }
 
@@ -237,7 +238,16 @@ function checkIfGameHasStarted(testGame) {
         return true
     }
 }
-
+function updateActionTextToPress(){
+    let action = document.getElementById('action-text')
+    let color = testGame.currentTurn 
+    action.innerHTML = color+' PRESS'
+}
+function updateActionTextToMove() {
+    let action = document.getElementById('action-text')
+    let color = testGame.currentTurn 
+    action.innerHTML = color+' MOVE'
+}
 
 
 function drawPiecesThatFinished(testGame){
@@ -263,7 +273,8 @@ function drawPiecesThatFinished(testGame){
 function movePiece(id, color){
     alert(`piece is moving of ID: ${id} and color ${color} and has a current position of ${testGame[color].pieces[0].currentPosition}`)
     // console.log(`test generate inside ${redP}`)
-        
+        getPopNextColor()
+        updateActionTextToPress() 
         console.log(`test game inside ${testGame[color]} ${color}`)
         let btn = document.getElementById(`${id}`)
         console.log(`id:${id}`)
@@ -275,10 +286,20 @@ function movePiece(id, color){
         console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i)
 
         if(i >= 33){
-            i = Math.abs(pieceCurrentPosition - 32)
-            let destination = document.getElementById(`${i}`)
-            let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
-            destination.innerHTML = newBtn
+          
+            // testGame[color].pieces[index].hasLooped = true
+            // i = Math.abs(pieceCurrentPosition - 32)
+            // console.log(i)
+            // if (testGame[color].pieces[index].hasLooped === true && testGame[color].pieces[index].color === 'blue' && i > 8){
+            //     testGame[color].finishedPieces += 1
+            //     drawPiecesThatFinished(testGame)
+            //     console.log('more than 33 but should draw piece')
+            // }
+            //     console.log('more than 33 but no exit')
+            //     let destination1 = document.getElementById(`${i}`)
+            //     let newBtn2 = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
+            //     destination1.innerHTML = newBtn2
+            
         }else if(i < 33){
             let destination = document.getElementById(`${i}`)
             let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
@@ -292,6 +313,7 @@ function movePiece(id, color){
         //     drawPiecesThatFinished(testGame)
         // }
         console.log('crossed the line second')
+      
         return testGame[color].pieces[index].currentPosition = i
 
     
@@ -386,6 +408,8 @@ function setPopActiveColor(){
 
 }
 
+
+
 // reads the current color and picks the next one, if is the last of the array jumps back to index-0
 function getPopNextColor(){
 
@@ -397,6 +421,49 @@ function getPopNextColor(){
     }else{
         testGame.currentTurn = testGame.colorOrder[0]
     }
+    let colorTurn = 'bg-' + testGame.currentTurn + '-500'
+    switch (testGame.currentTurn) {
+        case 'red':
+
+
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
+
+
+
+            break
+        case 'blue':
+
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
+
+            break
+        case 'yellow':
+
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
+
+            break
+        case 'green':
+
+
+            pop.classList = ''
+            pop.classList.add('center', 'flex', 'flex-col', 'w-24',
+                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
+                'font-extrabold', 'text-white', 'uppercase', 'items-center',
+                'justify-center', colorTurn)
+
+            break
+    }
 
 }
 
@@ -404,52 +471,10 @@ function getPopNextColor(){
 let pop = document.getElementById('pop-o-matic')
 pop.addEventListener('click', () =>{
     if(checkIfGameHasStarted(testGame)){   
-        let colorTurn = 'bg-' + testGame.currentTurn + '-500'
-        switch(testGame.currentTurn){
-            case 'red':
-    
-             
-                pop.classList = ''
-                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-                'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-                 'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                    'justify-center', colorTurn)
-                
-                
-    
-            break
-            case 'blue':
-               
-                pop.classList = ''
-                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-                    'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-                    'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                    'justify-center', colorTurn)
-                  
-            break
-            case 'yellow':
-               
-                pop.classList = ''
-                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-                    'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-                    'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                    'justify-center', colorTurn)
-                    
-                break
-            case 'green':
-          
-       
-                pop.classList = ''
-                pop.classList.add('center', 'flex', 'flex-col', 'w-24',
-                    'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
-                    'font-extrabold', 'text-white', 'uppercase', 'items-center',
-                    'justify-center', colorTurn)
-                    
-            break
-        }
-    throwDices()
-    addDices()
-    getPopNextColor()
+        
+        throwDices()
+        addDices()
+        updateActionTextToMove()
     
     
     }
