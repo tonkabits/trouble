@@ -32,7 +32,8 @@ class Dice {
 // this dice will pick a number between 1 and 4, or Miss fritter(skip roadblock) or Roadblock
 class SpecialDice {
     constructor() {
-        this.facesArr = [1, 2, 3, 4, 'Miss Fritter', 'Roadblock']
+        // this.facesArr = [1, 2, 3, 4, 'Miss Fritter', 'Roadblock']
+        this.facesArr = [1, 2, 3, 4, 5, 6]
     }
     roll() {
         let result = this.facesArr[Math.floor(Math.random() * this.facesArr.length)]
@@ -66,7 +67,7 @@ function addDices() {
 
     
     
-    let sum = testGame.dice1
+    let sum = testGame.dice1 + testGame.dice2
     testGame[color].lastThrow = sum
     // if(typeof(testGame.dice2) === 'number'){
     //     console.log('dices are numbers')
@@ -185,7 +186,7 @@ class Piece {
         this.color = color,
         this.startPosition = startPosition,
         this.currentPosition = startPosition
-        this.hasLooped = false
+        this.stepsToFinishLine = 32
         
     }
 
@@ -250,21 +251,41 @@ function updateActionTextToMove() {
 }
 
 
-function drawPiecesThatFinished(testGame){
+function drawPiecesThatFinished(player){
     // check if player has 4 pieces in Finish Line and declare him the winner
 
-    if (testGame.red.finishedPieces >= 4){
+    if (player.finishedPieces >= 4){
         setTimeout(function(){
 
-            alert(`we have a winner and is ${testGame.red.color}`)
+            alert(`we have a winner and is ${player.color}`)
         }, 1000) 
     }
     let redFinishLine = document.getElementById('red-finish-line')
-    for(let i = 0; i < testGame.red.finishedPieces; i++){
+    let blueFinishLine = document.getElementById('blue-finish-line')
+    let yellowFinishLine = document.getElementById('yellow-finish-line')
+    let greenFinishLine = document.getElementById('green-finish-line')
+
+    for(let i = 0; i < player.finishedPieces; i++){
     //    let finishedPiece = document.createElement('div')
-        finishedPiece = `<div class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white"><img src="./assets/trophy-solid.svg" class="w-4 h-4"></div>`
-    //     return redFinishLine += finishedPiece
-        return redFinishLine.innerHTML +=  finishedPiece
+
+        switch(player.color){
+            case 'red':
+                finishedRedPiece = `<div class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white"><img src="./assets/trophy-solid.svg" class="w-4 h-4"></div>`
+                return redFinishLine.innerHTML += finishedRedPiece
+            break    
+            case 'blue':
+                finishedBluePiece = `<div class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white"><img src="./assets/trophy-solid.svg" class="w-4 h-4"></div>`
+                return blueFinishLine.innerHTML += finishedBluePiece
+            break
+            case 'yellow':
+                finishedYellowPiece = `<div class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white"><img src="./assets/trophy-solid.svg" class="w-4 h-4"></div>`
+                return yellowFinishLine.innerHTML += finishedYellowPiece
+            break
+            case 'green':
+                finishedGreenPiece = `<div class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white"><img src="./assets/trophy-solid.svg" class="w-4 h-4"></div>`
+                return greenFinishLine.innerHTML += finishedGreenPiece
+            break
+        }
 
     }
 }
@@ -283,27 +304,33 @@ function movePiece(id, color){
         let pieceCurrentPosition = testGame[color].pieces[index].currentPosition
         let i = testGame[color].lastThrow + pieceCurrentPosition
         let lastThrow = testGame[color].lastThrow
-        console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i)
+        testGame[color].pieces[index].stepsToFinishLine -= lastThrow
+        console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i )
 
         if(i >= 33){
-          
+        //   this fails sometimes, i think is bcause it needs time to get the dom element
             // testGame[color].pieces[index].hasLooped = true
-            // i = Math.abs(pieceCurrentPosition - 32)
-            // console.log(i)
-            // if (testGame[color].pieces[index].hasLooped === true && testGame[color].pieces[index].color === 'blue' && i > 8){
-            //     testGame[color].finishedPieces += 1
-            //     drawPiecesThatFinished(testGame)
-            //     console.log('more than 33 but should draw piece')
-            // }
-            //     console.log('more than 33 but no exit')
-            //     let destination1 = document.getElementById(`${i}`)
-            //     let newBtn2 = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
-            //     destination1.innerHTML = newBtn2
+           
+            i = Math.abs((testGame[color].lastThrow + pieceCurrentPosition) - 32)
+            console.log(i)
+                console.log('more than 33 but no exit')
+                let destination1 = document.getElementById(`${i}`)
+                let newBtn2 = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
+                destination1.innerHTML = newBtn2
             
-        }else if(i < 33){
+        }
+        let destination = document.getElementById(`${i}`)
+        let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
+        destination.innerHTML = newBtn
+        
+        if (testGame[color].pieces[index].stepsToFinishLine < 0) {
+            console.log('this one made it to the finish line')
+
+            // switch stament with color to redraw piece is the corresponding finish line plus ++ the pieces in finish line count
+            testGame[color].finishedPieces += 1
             let destination = document.getElementById(`${i}`)
-            let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
-            destination.innerHTML = newBtn
+            destination.innerHTML = ''
+            drawPiecesThatFinished(testGame[color])
         }
         
         // for later to count how many spaces are between startingPosition and if bigger than 32 (full round) add it to the finish line and tick one 
