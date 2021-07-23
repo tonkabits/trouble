@@ -32,8 +32,8 @@ class Dice {
 // this dice will pick a number between 1 and 4, or Miss fritter(skip roadblock) or Roadblock
 class SpecialDice {
     constructor() {
-        // this.facesArr = [1, 2, 3, 4, 'Miss Fritter', 'Roadblock']
-        this.facesArr = [1, 2, 3, 4, 5, 6]
+        this.facesArr = [1, 2, 3, 4, 'Miss Fritter']//TBI, 'Roadblock'
+        // this.facesArr = [1, 2, 3, 4, 5, 6]
     }
     roll() {
         let result = this.facesArr[Math.floor(Math.random() * this.facesArr.length)]
@@ -69,16 +69,20 @@ function addDices() {
     
     let sum = testGame.dice1 + testGame.dice2
     testGame[color].lastThrow = sum
-    // if(typeof(testGame.dice2) === 'number'){
-    //     console.log('dices are numbers')
-    //     let sum = testGame.dice1 + testGame.dice2
-    //     testGame[color].lastThrow = sum
+    if(typeof(testGame.dice2) === 'number'){
+        console.log('dices are numbers')
+        let sum = testGame.dice1 + testGame.dice2
+        testGame[color].lastThrow = sum
 
-    // }else if(testGame.dice2 === 'Miss Fritter'){
-    //     console.log(`we have ${testGame.dice1} plus ${testGame.dice2}`)
-    //     testGame[color].lastThrow = testGame.dice1
-    //     testGame[color].hasMissFritter = true
-    // } else if (testGame.dice2 === 'Roadblock'){
+    }else if(testGame.dice2 === 'Miss Fritter'){
+        console.log(`we have ${testGame.dice1} plus ${testGame.dice2}`)
+        testGame[color].lastThrow = testGame.dice1
+        testGame.hasMissFritter = testGame.currentTurn
+        drawMissFritter(testGame.currentTurn)
+    } 
+
+    // TBI
+    // else if (testGame.dice2 === 'Roadblock'){
     //     console.log('roadblock')
     //     if(testGame[color].hasMissFritter){
     //         testGame[color].lastThrow = testGame.dice1
@@ -96,7 +100,7 @@ class Player {
     constructor(color, name) {
         this.color = color,
         this.name = name,
-        this.hasMissFritter = false,
+        // this.hasMissFritter = false,
         this.lastThrow = 0,
         this.finishedPieces = 0
     }
@@ -107,7 +111,7 @@ class Player {
                 let redPlayer = {
                     color: this.color,
                     name: this.name,
-                    hasMissFritter: this.hasMissFritter,
+                    // hasMissFritter: this.hasMissFritter,
                     lastThrow: this.lastThrow,
                     finishedPieces: this.finishedPieces
                 } 
@@ -115,6 +119,7 @@ class Player {
                 let startPositionRed = 0
                 for(let i = 0; i < 4; i++){
                     playerRedPiece[i] = new Piece(this.color, startPositionRed)
+                    this.domID = `${this.color}-piece-${i}`
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
                 }
                 redPlayer.pieces = playerRedPiece
@@ -126,7 +131,7 @@ class Player {
                 let bluePlayer = {
                     color: this.color,
                     name: this.name,
-                    hasMissFritter: this.hasMissFritter,
+                    // hasMissFritter: this.hasMissFritter,
                     lastThrow: this.lastThrow,
                     finishedPieces: this.finishedPieces
                 }
@@ -134,6 +139,7 @@ class Player {
                 let startPositionBlue = 8
                 for(let i = 0; i < 4; i++){
                     playerBluePiece[i] = new Piece(this.color, startPositionBlue)
+                    this.domID = `${this.color}-piece-${i}`
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
                 }
                 bluePlayer.pieces = playerBluePiece
@@ -145,7 +151,7 @@ class Player {
                 let yellowPlayer = {
                     color: this.color,
                     name: this.name,
-                    hasMissFritter: this.hasMissFritter,
+                    // hasMissFritter: this.hasMissFritter,
                     lastThrow: this.lastThrow,
                     finishedPieces: this.finishedPieces
                 }
@@ -153,6 +159,7 @@ class Player {
                 let startPositionYellow = 16
                 for (let i = 0; i < 4; i++) {
                     playerYellowPiece[i] = new Piece(this.color, startPositionYellow)
+                    this.domID = `${this.color}-piece-${i}`
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
                 }
                 yellowPlayer.pieces = playerYellowPiece
@@ -164,7 +171,7 @@ class Player {
                 let greenPlayer = {
                     color: this.color,
                     name: this.name,
-                    hasMissFritter: this.hasMissFritter,
+                    // hasMissFritter: this.hasMissFritter,
                     lastThrow: this.lastThrow,
                     finishedPieces: this.finishedPieces
                 }
@@ -172,6 +179,7 @@ class Player {
                 let startPositionGreen = 24
                 for (let i = 0; i < 4; i++) {
                     playerGreenPiece[i] = new Piece(this.color, startPositionGreen)
+                    this.domID = `${this.color}-piece-${i}`
                     // console.log(`This is piece-${i}, of ${this.color} color, and they start at position 0`)
                 }
                 greenPlayer.pieces = playerGreenPiece
@@ -185,9 +193,26 @@ class Piece {
     constructor(color, startPosition){
         this.color = color,
         this.startPosition = startPosition,
-        this.currentPosition = startPosition
-        this.stepsToFinishLine = 32
+        this.currentPosition = startPosition,
+        this.stepsToFinishLine = 32,
+        this.domID = ''
         
+    }
+
+    make(color){
+
+    }
+
+    makedom(color){
+
+    }
+
+    remove(color, domID){
+
+    }
+
+    removedom(color, domID){
+
     }
 
 }
@@ -222,8 +247,9 @@ class Game {
         let boardGame = {}
         boardGame.currentTurn = ''
         boardGame.blocks = []
-        for(let i = 1; i <= 32; i++){
-            boardGame.blocks[i] = 'emptyss'
+        for(let i = 1; i <= 33; i++){
+            boardGame.blocks[i] = null
+            
         }
         boardGame.blocks.shift() //remove first item of the array to make just 32 
         return boardGame
@@ -250,7 +276,19 @@ function updateActionTextToMove() {
     action.innerHTML = color+' MOVE'
 }
 
-
+function drawMissFritter(color){
+    testGame.hasMissFritter = color
+    let oldFritter = document.getElementById('fritter')
+    if(oldFritter){
+        oldFritter.parentNode.removeChild(oldFritter)
+    }
+    let strFritter = color+'-finish-line'
+    let fritterInPits = document.getElementById(strFritter)
+    let DOM_fritterImg = document.createElement('img')
+    DOM_fritterImg.setAttribute('id', 'fritter')
+    DOM_fritterImg.src = './assets/MissFritter18xss.png'
+    fritterInPits.appendChild(DOM_fritterImg)
+}
 function drawPiecesThatFinished(player){
     // check if player has 4 pieces in Finish Line and declare him the winner
 
@@ -298,21 +336,80 @@ function movePiece(id, color){
         updateActionTextToPress() 
         console.log(`test game inside ${testGame[color]} ${color}`)
         let btn = document.getElementById(`${id}`)
-        console.log(`id:${id}`)
         btn.remove()
         let index = id.slice(-1);// pick the number portion of the id of the dom element we are targeting
+        testGame[color].pieces[index].domID = id //save the domID of the piece to resolve same location conflicts
+        
         let pieceCurrentPosition = testGame[color].pieces[index].currentPosition
+        testGame.blocks[testGame[color].pieces[index].currentPosition] = null
         let i = testGame[color].lastThrow + pieceCurrentPosition
         let lastThrow = testGame[color].lastThrow
         testGame[color].pieces[index].stepsToFinishLine -= lastThrow
         console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i )
+       
+        // by conflics reads the id of the old object and creates a 
+        if(testGame.blocks[i] === null ){
+            console.log('this block is NULL')
+            testGame.blocks[i] = id
+        } else if (testGame.blocks[i]){
+            console.log('hey we have a conflict')
+            // gets the str content of that block
+            let bouncedPiece = testGame.blocks[i]
+            // gets the pits from the bounced piece
+            let iniColor = bouncedPiece.slice(0,1)
+            console.log(iniColor)
+            switch(iniColor){
+                case 'r':
+                    console.log('hit case r')
+                    testGame[color].pieces[index].currentPosition = 0
+                    testGame[color].pieces[index].stepsToFinishLine = 32
+                    testGame[color].lastThrow = 0
+                    // testGame[color].pieces[index].domID = 'test'
+                    let redPitsElement = document.getElementById('red-pits')
+                    let redBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
+                    return redPitsElement.innerHTML += redBounced
+                break    
+                case 'b':
+                    console.log('hit case b')
+                    testGame[color].pieces[index].currentPosition = 8
+                    testGame[color].pieces[index].stepsToFinishLine = 32
+                    testGame[color].lastThrow = 0
+                    let bluePitsElement = document.getElementById('blue-pits')
+                    let blueBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
+                    return bluePitsElement.innerHTML += blueBounced
+                break    
+                case 'y':
+                    console.log('hit case y')
+                    testGame[color].pieces[index].currentPosition = 16
+                    testGame[color].pieces[index].stepsToFinishLine = 32
+                    testGame[color].lastThrow = 0
+                    let yellowPitsElement = document.getElementById('yellow-pits')
+                    let yellowBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
+                    return yellowPitsElement.innerHTML += yellowBounced
+                break    
+                case 'g':
+                    testGame[color].pieces[index].currentPosition = 24
+                    testGame[color].pieces[index].stepsToFinishLine = 32
+                    testGame[color].lastThrow = 0
+                    console.log('hit case g')
+                    let greenPitsElement = document.getElementById('green-pits')
+                    let greenBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
+                    return greenPitsElement.innerHTML += greenBounced
+                break    
+            }
+            // let strPits =  color+'-pits'
 
+            // let pitsElement = document.getElementById(strPits)
+
+        }
+        // 
+        
         if(i >= 33){
-        //   this fails sometimes, i think is bcause it needs time to get the dom element
+            //   this fails sometimes, i think is bcause it needs time to get the dom element
             // testGame[color].pieces[index].hasLooped = true
-           
+            
             i = Math.abs((testGame[color].lastThrow + pieceCurrentPosition) - 32)
-            console.log(i)
+                console.log(i)
                 console.log('more than 33 but no exit')
                 let destination1 = document.getElementById(`${i}`)
                 let newBtn2 = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
@@ -377,7 +474,7 @@ players.addEventListener('click', () => {
                 case 'yellow':
                 let playerHtmlHorizontal = `<div class="flex flex-col min-h-32">
                     <div class="text-xl text-center">
-                    ${player.name} - Team Name
+                    ${player.name}
                     </div >
                     <div class="flex">
                         <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>1</button>
@@ -391,9 +488,9 @@ players.addEventListener('click', () => {
 
                 case 'blue':
                 case 'green':
-                let playerHtmlVertical = `<div class="flex flex-col">
-                    <div class="text-xl text-center rotate-180">
-                         ${player.name} - Team Name
+                let playerHtmlVertical = `<div class="flex flex-row justify-center">
+                    <div class="text-xl text-center rotate-180 flex items-center">
+                        <span style=" writing-mode: vertical-rl; text-orientation: upright;">${player.name}</span>
                      </div>
                      <div class="flex flex-col">
                          <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>1</button>
