@@ -340,14 +340,16 @@ function movePiece(id, color){
         let index = id.slice(-1);// pick the number portion of the id of the dom element we are targeting
         testGame[color].pieces[index].domID = id //save the domID of the piece to resolve same location conflicts
         
-        let pieceCurrentPosition = testGame[color].pieces[index].currentPosition
-        testGame.blocks[testGame[color].pieces[index].currentPosition] = null
+        let pieceCurrentPosition = testGame[color].pieces[index].currentPosition 
+    
         let i = testGame[color].lastThrow + pieceCurrentPosition
         let lastThrow = testGame[color].lastThrow
         testGame[color].pieces[index].stepsToFinishLine -= lastThrow
         console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i )
        
         // by conflics reads the id of the old object and creates a 
+        // create a function for this
+        // function checkForConflict(){}
         if(testGame.blocks[i] === null ){
             console.log('this block is NULL')
             testGame.blocks[i] = id
@@ -355,47 +357,88 @@ function movePiece(id, color){
             console.log('hey we have a conflict')
             // gets the str content of that block
             let bouncedPiece = testGame.blocks[i]
+            let btnToBeRemoved = document.getElementById(bouncedPiece)
+            console.log('bouncedPiece'+ bouncedPiece)
+            btnToBeRemoved.remove()
+            // create his replacement in the appropiate color
+
+            
+
             // gets the pits from the bounced piece
             let iniColor = bouncedPiece.slice(0,1)
             console.log(iniColor)
             switch(iniColor){
-                case 'r':
-                    console.log('hit case r')
-                    testGame[color].pieces[index].currentPosition = 0
-                    testGame[color].pieces[index].stepsToFinishLine = 32
-                    testGame[color].lastThrow = 0
-                    // testGame[color].pieces[index].domID = 'test'
+                // case 'r':
+                //     console.log('hit case r')
+                //     testGame[color].pieces[index].currentPosition = 0
+                //     testGame[color].pieces[index].stepsToFinishLine = 32
+                //     testGame[color].lastThrow = 0
+                //     // testGame[color].pieces[index].domID = 'test'
+                //     let redPitsElement = document.getElementById('red-pits')
+                //     let redBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
+                //     return redPitsElement.innerHTML += redBounced
+                // break    
+                // case 'b':
+                //     console.log('hit case b')
+                //     testGame[color].pieces[index].currentPosition = 8
+                //     testGame[color].pieces[index].stepsToFinishLine = 32
+                //     testGame[color].lastThrow = 0
+                //     let bluePitsElement = document.getElementById('blue-pits')
+                //     let blueBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
+                //     return bluePitsElement.innerHTML += blueBounced
+                // break    
+                // case 'y':
+                //     console.log('hit case y')
+                //     testGame[color].pieces[index].currentPosition = 16
+                //     testGame[color].pieces[index].stepsToFinishLine = 32
+                //     testGame[color].lastThrow = 0
+                //     let yellowPitsElement = document.getElementById('yellow-pits')
+                //     let yellowBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
+                //     return yellowPitsElement.innerHTML += yellowBounced
+                // break    
+                // case 'g':
+                //     testGame[color].pieces[index].currentPosition = 24
+                //     testGame[color].pieces[index].stepsToFinishLine = 32
+                //     testGame[color].lastThrow = 0
+                //     console.log('hit case g')
+                //     let greenPitsElement = document.getElementById('green-pits')
+                //     let greenBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
+                //     return greenPitsElement.innerHTML += greenBounced
+                // break    
+
+                case 'r':  
+                    let bouncedRed = new Piece('red', 0)
+                    testGame.red.pieces.push(bouncedRed)
+                    let j =  testGame.red.pieces.length -1
                     let redPitsElement = document.getElementById('red-pits')
-                    let redBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
-                    return redPitsElement.innerHTML += redBounced
-                break    
+                    let redBounced = `<button id="red-piece-${j}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
+                    redPitsElement.innerHTML += redBounced
+                
+                break
                 case 'b':
-                    console.log('hit case b')
-                    testGame[color].pieces[index].currentPosition = 8
-                    testGame[color].pieces[index].stepsToFinishLine = 32
-                    testGame[color].lastThrow = 0
+                    let bouncedBlue = new Piece('blue', 8)
+                    testGame.blue.pieces.push(bouncedBlue)
+                    let k = testGame.blue.pieces.length -1
                     let bluePitsElement = document.getElementById('blue-pits')
-                    let blueBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
-                    return bluePitsElement.innerHTML += blueBounced
-                break    
+                    let blueBounced = `<button id="blue-piece-${k}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
+                    bluePitsElement.innerHTML += blueBounced
+                break
                 case 'y':
-                    console.log('hit case y')
-                    testGame[color].pieces[index].currentPosition = 16
-                    testGame[color].pieces[index].stepsToFinishLine = 32
-                    testGame[color].lastThrow = 0
+                    let bouncedYellow = new Piece('yellow', 16)
+                    testGame.yellow.pieces.push(bouncedYellow)
+                    let l = testGame.yellow.pieces.length - 1
                     let yellowPitsElement = document.getElementById('yellow-pits')
-                    let yellowBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
-                    return yellowPitsElement.innerHTML += yellowBounced
-                break    
+                    let yellowBounced = `<button id="yellow-piece-${l}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
+                    yellowPitsElement.innerHTML += yellowBounced
+                break
                 case 'g':
-                    testGame[color].pieces[index].currentPosition = 24
-                    testGame[color].pieces[index].stepsToFinishLine = 32
-                    testGame[color].lastThrow = 0
-                    console.log('hit case g')
+                    let bouncedGreen = new Piece('green', 24)
+                    testGame.green.pieces.push(bouncedGreen)
+                    let m = testGame.green.pieces.length - 1
                     let greenPitsElement = document.getElementById('green-pits')
-                    let greenBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
-                    return greenPitsElement.innerHTML += greenBounced
-                break    
+                    let greenBounced = `<button id="green-piece-${m}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
+                    greenPitsElement.innerHTML += greenBounced
+                break
             }
             // let strPits =  color+'-pits'
 
@@ -437,7 +480,7 @@ function movePiece(id, color){
         //     drawPiecesThatFinished(testGame)
         // }
         console.log('crossed the line second')
-      
+        testGame.blocks[testGame[color].pieces[index].currentPosition] = null //set to null if we remove the piece, we should check for conflicts before doing this
         return testGame[color].pieces[index].currentPosition = i
 
     
