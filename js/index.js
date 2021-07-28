@@ -55,8 +55,10 @@ function throwDices() {
 
     let dice2 = new SpecialDice
     dice2 = dice2.roll()
+
     // clear the input
     // half sec animation
+    // then show dice results
     let diceAni1  = new Image(64,64)
     diceAni1.src = './assets/dices/rolling.gif'
     dice1dom.appendChild(diceAni1)
@@ -85,27 +87,7 @@ function throwDices() {
 }
 
 
-                
-          
-
-// const diceNumsArr = [
-//     1,2,4,6
-// ]
-// function animateDice(n){
-    
-//     diceNumsArr.forEach((num) = () => {
-//         setTimeout(() => {
-            
-//             let imageFace = new Image(32, 32)
-//             imageFace.src = './assets/dices/'+num+'.png'
-//         }, 100);
-    
-// }
-
-// }
-
-
-// user see results of the dice throw and pick which piece to move
+// Math behind the result of throwing the dices
 function addDices() {
     let color = testGame.currentTurn
     console.log('color:'+ color)
@@ -127,7 +109,6 @@ function addDices() {
         drawMissFritter(testGame.currentTurn)
     } 
 
-    // TBI
     else if (testGame.dice2 === 'Roadblock'){
         console.log('roadblock')
         if(testGame.hasMissFritter === testGame.currentTurn){
@@ -146,7 +127,7 @@ function addDices() {
 }
 
 
-
+// Up to 4 players
 class Player {
     constructor(color, name) {
         this.color = color,
@@ -240,6 +221,8 @@ class Player {
     } 
 }
 
+
+// 4 pieces for player
 class Piece {
     constructor(color, startPosition){
         this.color = color,
@@ -250,45 +233,11 @@ class Piece {
         
     }
 
-    make(color){
-
-    }
-
-    makedom(color){
-
-    }
-
-    remove(color, domID){
-
-    }
-
-    removedom(color, domID){
-
-    }
-
 }
 
-// let testPlayer = new Player('blue', 'testName')
-// let testMake = new Player('red', 'Rayo')
-// let testGenerate = new Player('red', 'Rojito') 
-// testGenerate = testGenerate.make()
-// console.log(testGenerate)
 
 
-// let testGenerate2 = new Player('blue', 'Azulito') 
-// testGenerate2 = testGenerate2.make()
-// console.log({testGenerate2})
-//  console.log(testPlayer)
-
-
-
-// if current turn blue make pop-O-matic blue
-// throw dices
-// pick piece
-// make move
-// update current turn
-
-
+// create a game given the number and colors of the players
 class Game {
     constructor(){
         this.colorOrder = []
@@ -358,7 +307,6 @@ function sendMessage(strTitle, modalImage, modalSound){
     },1500)
 }
 
-
 function toggleModal() {
     const body = document.querySelector('body')
     const modal = document.querySelector('.modal')
@@ -408,11 +356,12 @@ function drawPiecesThatFinished(player){
     }
 }
 
-// movePiece() currently only move red pieces, color of the piece needs to be passed dinamically
+// Does the logic of removing the moving piece,
+// calculating the next location and adding the given piece, to the board, the pits or the finish line
+
 function movePiece(id, color){
     // alert(`piece is moving of ID: ${id} and color ${color} and has a current position of ${testGame[color].pieces[0].currentPosition}`)
         if(testGame.currentTurn !== color){
-            // alert('hold on is not your turn')
             sendMessage(`hold on is not your turn, is ${testGame.currentTurn} time move`, './assets/13-StopSign_500_sm.gif', './assets/sounds/braking.wav','')
             
             return
@@ -448,9 +397,8 @@ function movePiece(id, color){
             
         }
 
-    // by conflics reads the id of the old object and creates a 
-    // create a function for this
-    // function checkForConflict(){}
+    // by conflics reads the id of the old object and creates a new Object piece inside the pits
+
     if (testGame.blocks[i] === null) {
         console.log('this block is NULL')
         testGame.blocks[i] = id
@@ -467,8 +415,6 @@ function movePiece(id, color){
             btnToBeRemoved.remove()
         }
         // create his replacement in the appropiate color
-
-
 
         // gets the pits from the bounced piece
         let iniColor = bouncedPiece.slice(0, 1)
@@ -507,12 +453,10 @@ function movePiece(id, color){
                 greenPitsElement.innerHTML += greenBounced
                 break
         }
-        // let strPits =  color+'-pits'
 
-        // let pitsElement = document.getElementById(strPits)
 
     }
-        //
+      
 
 
 
@@ -531,12 +475,7 @@ function movePiece(id, color){
             drawPiecesThatFinished(testGame[color])
         }
         
-        // for later to count how many spaces are between startingPosition and if bigger than 32 (full round) add it to the finish line and tick one 
-        // else{
-        //     console.log('crossed the line')
-        //     testGame[color].finishedPieces += 1
-        //     drawPiecesThatFinished(testGame)
-        // }
+
         console.log('crossed the line second')
         testGame.blocks[testGame[color].pieces[index].currentPosition] = null //set to null if we remove the piece, we should check for conflicts before doing this
         return testGame[color].pieces[index].currentPosition = i
@@ -704,4 +643,7 @@ pop.addEventListener('click', () =>{
     
     }
 })
+
+// author: Luis Quintero
+// https://github.com/tonkabits/trouble
 
