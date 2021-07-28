@@ -1,6 +1,7 @@
 let testGame = {}
 
 
+
 // window.alert('working JS') //testing JS
 
 // this is a 2 step process, the user press the center button(pop-o-matic)
@@ -32,7 +33,7 @@ class Dice {
 // this dice will pick a number between 1 and 4, or Miss fritter(skip roadblock) or Roadblock
 class SpecialDice {
     constructor() {
-        this.facesArr = [1, 2, 3, 4, 'Miss Fritter']//TBI, 'Roadblock'
+        this.facesArr = [1, 2, 3, 4, 'Miss Fritter', 'Roadblock']
         // this.facesArr = [1, 2, 3, 4, 5, 6]
     }
     roll() {
@@ -44,20 +45,65 @@ class SpecialDice {
 
 // user throw dices 
 function throwDices() {
+    let dice1dom = document.getElementById('dice1dom')
+    let dice2dom = document.getElementById('dice2dom')
+    dice1dom.innerHTML = ''
+    dice2dom.innerHTML = ''
+
     let dice1 = new Dice
     dice1 = dice1.roll()
 
     let dice2 = new SpecialDice
     dice2 = dice2.roll()
+    // clear the input
+    // half sec animation
+    let diceAni1  = new Image(64,64)
+    diceAni1.src = './assets/dices/rolling.gif'
+    dice1dom.appendChild(diceAni1)
+    let diceAni2  = new Image(64,64)
+    diceAni2.src = './assets/dices/rollings.gif'
+    dice2dom.appendChild(diceAni2)
+    setTimeout(() =>{ 
+        dice1dom.innerHTML = ''
+        dice2dom.innerHTML = ''
+        let imgDice1 = new Image(64, 64)
+        imgDice1.src = './assets/dices/' + dice1 + '.png'
+        // dice1dom.innerHTML = dice1
+        dice1dom.appendChild(imgDice1)
+        let imgDice2 = new Image(64, 64)
+        imgDice2.src = './assets/dices/' + dice2 + '.png'
+        // dice2dom.innerHTML = dice2
+        dice2dom.appendChild(imgDice2)
+    },1000)
+    
+    
 
-    let dice1dom = document.getElementById('dice1dom')
-    let dice2dom = document.getElementById('dice2dom')
-    dice1dom.innerHTML = dice1
-    dice2dom.innerHTML = dice2
+
     testGame.dice1 = dice1
     testGame.dice2 = dice2
     return (dice1, dice2)
 }
+
+
+                
+          
+
+// const diceNumsArr = [
+//     1,2,4,6
+// ]
+// function animateDice(n){
+    
+//     diceNumsArr.forEach((num) = () => {
+//         setTimeout(() => {
+            
+//             let imageFace = new Image(32, 32)
+//             imageFace.src = './assets/dices/'+num+'.png'
+//         }, 100);
+    
+// }
+
+// }
+
 
 // user see results of the dice throw and pick which piece to move
 function addDices() {
@@ -82,16 +128,21 @@ function addDices() {
     } 
 
     // TBI
-    // else if (testGame.dice2 === 'Roadblock'){
-    //     console.log('roadblock')
-    //     if(testGame[color].hasMissFritter){
-    //         testGame[color].lastThrow = testGame.dice1
-    //     }else{
-    //         console.log('you miss a turn')
-    //         // i need to make a cycle logic to acomodate for colors schedule
-    //         // goToNextPlayer()
-    //     }
-    // }
+    else if (testGame.dice2 === 'Roadblock'){
+        console.log('roadblock')
+        if(testGame.hasMissFritter === testGame.currentTurn){
+            sendMessage(`Unstopable!!!`, './assets/power.gif', './assets/sounds/unstopable.mp3')
+            testGame[color].lastThrow = testGame.dice1
+        }else{
+            console.log('you miss a turn')
+               testGame[color].lastThrow = 0
+            //    alert('Oh NO!... you miss a turn')
+                sendMessage(`Oh NO!... you miss a turn`, './assets/13-StopSign_500_sm.gif', './assets/sounds/car_crash.wav')
+                getPopNextColor()
+                updateActionTextToPress()
+        
+        }
+    }
 }
 
 
@@ -260,7 +311,8 @@ class Game {
 
 function checkIfGameHasStarted(testGame) {
     if(testGame.currentTurn === undefined){
-        alert('please add at least a player to roll the dices')
+        // alert('please add at least a player to roll the dices')
+        sendMessage('please add at least two player to roll the dices','./assets/car-gif-17_sm.gif','./assets/sounds/burnout.wav')
     }else{
         return true
     }
@@ -289,13 +341,41 @@ function drawMissFritter(color){
     DOM_fritterImg.src = './assets/MissFritter18xss.png'
     fritterInPits.appendChild(DOM_fritterImg)
 }
+
+function sendMessage(strTitle, modalImage, modalSound){
+    toggleModal()
+    let title = document.getElementById('modal-title')
+    title.innerHTML = strTitle
+    let image = document.getElementById('modal-image')
+    image.setAttribute('src', modalImage)
+    let sound = document.getElementById('modal-sound')
+    sound.setAttribute('src', modalSound)
+    sound.play()
+
+
+    setTimeout(() => {
+        toggleModal()
+    },1500)
+}
+
+
+function toggleModal() {
+    const body = document.querySelector('body')
+    const modal = document.querySelector('.modal')
+    modal.classList.toggle('opacity-0')
+    modal.classList.toggle('pointer-events-none')
+    body.classList.toggle('modal-active')
+}
+
+
 function drawPiecesThatFinished(player){
     // check if player has 4 pieces in Finish Line and declare him the winner
 
     if (player.finishedPieces >= 4){
         setTimeout(function(){
 
-            alert(`we have a winner and is ${player.color}`)
+            // alert(`we have a winner and is ${player.color}`)
+            sendMessage(`we have a winner and is ${player.color}`,'./assets/14-Bravo_500_sm.gif' ,'')
         }, 1000) 
     }
     let redFinishLine = document.getElementById('red-finish-line')
@@ -330,7 +410,13 @@ function drawPiecesThatFinished(player){
 
 // movePiece() currently only move red pieces, color of the piece needs to be passed dinamically
 function movePiece(id, color){
-    alert(`piece is moving of ID: ${id} and color ${color} and has a current position of ${testGame[color].pieces[0].currentPosition}`)
+    // alert(`piece is moving of ID: ${id} and color ${color} and has a current position of ${testGame[color].pieces[0].currentPosition}`)
+        if(testGame.currentTurn !== color){
+            // alert('hold on is not your turn')
+            sendMessage(`hold on is not your turn, is ${testGame.currentTurn} time move`, './assets/13-StopSign_500_sm.gif', './assets/sounds/braking.wav','')
+            
+            return
+        }
     // console.log(`test generate inside ${redP}`)
         getPopNextColor()
         updateActionTextToPress() 
@@ -347,105 +433,7 @@ function movePiece(id, color){
         testGame[color].pieces[index].stepsToFinishLine -= lastThrow
         console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i )
        
-        // by conflics reads the id of the old object and creates a 
-        // create a function for this
-        // function checkForConflict(){}
-        if(testGame.blocks[i] === null ){
-            console.log('this block is NULL')
-            testGame.blocks[i] = id
-        } else if (testGame.blocks[i]){
-            console.log('hey we have a conflict')
-            // gets the str content of that block
-            let bouncedPiece = testGame.blocks[i]
-            let btnToBeRemoved = document.getElementById(bouncedPiece)
-            console.log('bouncedPiece'+ bouncedPiece)
-            btnToBeRemoved.remove()
-            // create his replacement in the appropiate color
 
-            
-
-            // gets the pits from the bounced piece
-            let iniColor = bouncedPiece.slice(0,1)
-            console.log(iniColor)
-            switch(iniColor){
-                // case 'r':
-                //     console.log('hit case r')
-                //     testGame[color].pieces[index].currentPosition = 0
-                //     testGame[color].pieces[index].stepsToFinishLine = 32
-                //     testGame[color].lastThrow = 0
-                //     // testGame[color].pieces[index].domID = 'test'
-                //     let redPitsElement = document.getElementById('red-pits')
-                //     let redBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
-                //     return redPitsElement.innerHTML += redBounced
-                // break    
-                // case 'b':
-                //     console.log('hit case b')
-                //     testGame[color].pieces[index].currentPosition = 8
-                //     testGame[color].pieces[index].stepsToFinishLine = 32
-                //     testGame[color].lastThrow = 0
-                //     let bluePitsElement = document.getElementById('blue-pits')
-                //     let blueBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
-                //     return bluePitsElement.innerHTML += blueBounced
-                // break    
-                // case 'y':
-                //     console.log('hit case y')
-                //     testGame[color].pieces[index].currentPosition = 16
-                //     testGame[color].pieces[index].stepsToFinishLine = 32
-                //     testGame[color].lastThrow = 0
-                //     let yellowPitsElement = document.getElementById('yellow-pits')
-                //     let yellowBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
-                //     return yellowPitsElement.innerHTML += yellowBounced
-                // break    
-                // case 'g':
-                //     testGame[color].pieces[index].currentPosition = 24
-                //     testGame[color].pieces[index].stepsToFinishLine = 32
-                //     testGame[color].lastThrow = 0
-                //     console.log('hit case g')
-                //     let greenPitsElement = document.getElementById('green-pits')
-                //     let greenBounced = `<button id="${bouncedPiece}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
-                //     return greenPitsElement.innerHTML += greenBounced
-                // break    
-
-                case 'r':  
-                    let bouncedRed = new Piece('red', 0)
-                    testGame.red.pieces.push(bouncedRed)
-                    let j =  testGame.red.pieces.length -1
-                    let redPitsElement = document.getElementById('red-pits')
-                    let redBounced = `<button id="red-piece-${j}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
-                    redPitsElement.innerHTML += redBounced
-                
-                break
-                case 'b':
-                    let bouncedBlue = new Piece('blue', 8)
-                    testGame.blue.pieces.push(bouncedBlue)
-                    let k = testGame.blue.pieces.length -1
-                    let bluePitsElement = document.getElementById('blue-pits')
-                    let blueBounced = `<button id="blue-piece-${k}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
-                    bluePitsElement.innerHTML += blueBounced
-                break
-                case 'y':
-                    let bouncedYellow = new Piece('yellow', 16)
-                    testGame.yellow.pieces.push(bouncedYellow)
-                    let l = testGame.yellow.pieces.length - 1
-                    let yellowPitsElement = document.getElementById('yellow-pits')
-                    let yellowBounced = `<button id="yellow-piece-${l}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
-                    yellowPitsElement.innerHTML += yellowBounced
-                break
-                case 'g':
-                    let bouncedGreen = new Piece('green', 24)
-                    testGame.green.pieces.push(bouncedGreen)
-                    let m = testGame.green.pieces.length - 1
-                    let greenPitsElement = document.getElementById('green-pits')
-                    let greenBounced = `<button id="green-piece-${m}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
-                    greenPitsElement.innerHTML += greenBounced
-                break
-            }
-            // let strPits =  color+'-pits'
-
-            // let pitsElement = document.getElementById(strPits)
-
-        }
-        // 
         
         if(i >= 33){
             //   this fails sometimes, i think is bcause it needs time to get the dom element
@@ -459,6 +447,76 @@ function movePiece(id, color){
                 destination1.innerHTML = newBtn2
             
         }
+
+    // by conflics reads the id of the old object and creates a 
+    // create a function for this
+    // function checkForConflict(){}
+    if (testGame.blocks[i] === null) {
+        console.log('this block is NULL')
+        testGame.blocks[i] = id
+    } else if (testGame.blocks[i]) {
+        console.log('hey we have a conflict')
+        sendMessage(`Oh NO!... back to the pits`, './assets/13-StopSign_500_sm.gif', './assets/sounds/car_crash.wav')
+        // gets the str content of that block
+        let bouncedPiece = testGame.blocks[i]
+        let btnToBeRemoved = document.getElementById(bouncedPiece)
+        console.log('bouncedPiece' + bouncedPiece)
+
+        //if the button exists remove it 
+        if (btnToBeRemoved) {
+            btnToBeRemoved.remove()
+        }
+        // create his replacement in the appropiate color
+
+
+
+        // gets the pits from the bounced piece
+        let iniColor = bouncedPiece.slice(0, 1)
+        console.log(iniColor)
+        switch (iniColor) {
+            case 'r':
+                let bouncedRed = new Piece('red', 0)
+                testGame.red.pieces.push(bouncedRed)
+                let j = testGame.red.pieces.length - 1
+                let redPitsElement = document.getElementById('red-pits-buttons')
+                let redBounced = `<button id="red-piece-${j}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
+                redPitsElement.innerHTML += redBounced
+                break
+            case 'b':
+                let bouncedBlue = new Piece('blue', 8)
+                testGame.blue.pieces.push(bouncedBlue)
+                let k = testGame.blue.pieces.length - 1
+                let bluePitsElement = document.getElementById('blue-pits-buttons')
+                let blueBounced = `<button id="blue-piece-${k}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
+                bluePitsElement.innerHTML += blueBounced
+                break
+            case 'y':
+                let bouncedYellow = new Piece('yellow', 16)
+                testGame.yellow.pieces.push(bouncedYellow)
+                let l = testGame.yellow.pieces.length - 1
+                let yellowPitsElement = document.getElementById('yellow-pits-buttons')
+                let yellowBounced = `<button id="yellow-piece-${l}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
+                yellowPitsElement.innerHTML += yellowBounced
+                break
+            case 'g':
+                let bouncedGreen = new Piece('green', 24)
+                testGame.green.pieces.push(bouncedGreen)
+                let m = testGame.green.pieces.length - 1
+                let greenPitsElement = document.getElementById('green-pits-buttons')
+                let greenBounced = `<button id="green-piece-${m}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
+                greenPitsElement.innerHTML += greenBounced
+                break
+        }
+        // let strPits =  color+'-pits'
+
+        // let pitsElement = document.getElementById(strPits)
+
+    }
+        //
+
+
+
+
         let destination = document.getElementById(`${i}`)
         let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
         destination.innerHTML = newBtn
@@ -519,11 +577,11 @@ players.addEventListener('click', () => {
                     <div class="text-xl text-center">
                     ${player.name}
                     </div >
-                    <div class="flex">
-                        <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>1</button>
-                    <button id="${player.color}-piece-1" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>2</button>
-                    <button id="${player.color}-piece-2" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>3</button>
-                        <button id="${player.color}-piece-3" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'>4</button>
+                    <div id="${player.color}-pits-buttons" class="flex">
+                        <button id="${player.color}-piece-0" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'></button>
+                    <button id="${player.color}-piece-1" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'></button>
+                    <button id="${player.color}-piece-2" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'></button>
+                        <button id="${player.color}-piece-3" class="h-12 w-12 bg-${player.color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id, "${player.color}")'></button>
                     </div>
                 </div >`
                 playerPits.innerHTML = playerHtmlHorizontal
@@ -535,11 +593,11 @@ players.addEventListener('click', () => {
                     <div class="text-xl text-center rotate-180 flex items-center">
                         <span style=" writing-mode: vertical-rl; text-orientation: upright;">${player.name}</span>
                      </div>
-                     <div class="flex flex-col">
-                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>1</button>
-                         <button id="${player.color}-piece-1" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>2</button>
-                         <button id="${player.color}-piece-2" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>3</button>
-                         <button id="${player.color}-piece-3" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'>4</button>
+                     <div id="${player.color}-pits-buttons" class="flex flex-col">
+                         <button id="${player.color}-piece-0" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'></button>
+                         <button id="${player.color}-piece-1" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'></button>
+                         <button id="${player.color}-piece-2" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'></button>
+                         <button id="${player.color}-piece-3" class="w-6 md:h-12 h-6 md:w-12 bg-${player.color}-500 rounded-full text-white" onclick='movePiece(this.id, "${player.color}")'></button>
                      </div>
                  </div>`
                 playerPits.innerHTML = playerHtmlVertical
