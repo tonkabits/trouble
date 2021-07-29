@@ -1,23 +1,6 @@
 let testGame = {}
 
 
-
-// window.alert('working JS') //testing JS
-
-// this is a 2 step process, the user press the center button(pop-o-matic)
-// then picks which pieces he wants to move,
-
-// then next player is active
-
-
-
-// this function will require the users to double check they want to refresh so we dont lose the current game
-    // window.onbeforeunload = function (event) {
-    //     return confirm("Confirm refresh");
-    // };
-
-
-
 // this Dice will pick a number between 1 and 6
 class Dice {
     constructor() {
@@ -33,7 +16,7 @@ class Dice {
 // this dice will pick a number between 1 and 4, or Miss fritter(skip roadblock) or Roadblock
 class SpecialDice {
     constructor() {
-        this.facesArr = [1, 2, 3, 4, 'Miss Fritter', 'Roadblock']
+        this.facesArr = [1, 2, 3, 4, 'MissFritter', 'Roadblock']
         // this.facesArr = [1, 2, 3, 4, 5, 6]
     }
     roll() {
@@ -77,9 +60,6 @@ function throwDices() {
         // dice2dom.innerHTML = dice2
         dice2dom.appendChild(imgDice2)
     },1000)
-    
-    
-
 
     testGame.dice1 = dice1
     testGame.dice2 = dice2
@@ -93,8 +73,6 @@ function addDices() {
     console.log('color:'+ color)
     console.log('testGame.colo:'+testGame[color].lastThrow)
 
-    
-    
     let sum = testGame.dice1 + testGame.dice2
     testGame[color].lastThrow = sum
     if(typeof(testGame.dice2) === 'number'){
@@ -102,7 +80,7 @@ function addDices() {
         let sum = testGame.dice1 + testGame.dice2
         testGame[color].lastThrow = sum
 
-    }else if(testGame.dice2 === 'Miss Fritter'){
+    }else if(testGame.dice2 === 'MissFritter'){
         console.log(`we have ${testGame.dice1} plus ${testGame.dice2}`)
         testGame[color].lastThrow = testGame.dice1
         testGame.hasMissFritter = testGame.currentTurn
@@ -236,7 +214,6 @@ class Piece {
 }
 
 
-
 // create a game given the number and colors of the players
 class Game {
     constructor(){
@@ -254,7 +231,6 @@ class Game {
         boardGame.blocks.shift() //remove first item of the array to make just 32 
         return boardGame
     }
-
 
 }
 
@@ -361,41 +337,41 @@ function drawPiecesThatFinished(player){
 
 function movePiece(id, color){
     // alert(`piece is moving of ID: ${id} and color ${color} and has a current position of ${testGame[color].pieces[0].currentPosition}`)
-        if(testGame.currentTurn !== color){
-            sendMessage(`hold on is not your turn, is ${testGame.currentTurn} time move`, './assets/13-StopSign_500_sm.gif', './assets/sounds/braking.wav','')
-            
-            return
-        }
-    // console.log(`test generate inside ${redP}`)
-        getPopNextColor()
-        updateActionTextToPress() 
-        console.log(`test game inside ${testGame[color]} ${color}`)
-        let btn = document.getElementById(`${id}`)
-        btn.remove()
-        let index = id.slice(-1);// pick the number portion of the id of the dom element we are targeting
-        testGame[color].pieces[index].domID = id //save the domID of the piece to resolve same location conflicts
+    if(testGame.currentTurn !== color){
+        sendMessage(`hold on is not your turn, is ${testGame.currentTurn} time move`, './assets/13-StopSign_500_sm.gif', './assets/sounds/braking.wav','')
         
-        let pieceCurrentPosition = testGame[color].pieces[index].currentPosition 
+        return
+    }
+    // console.log(`test generate inside ${redP}`)
+    getPopNextColor()
+    updateActionTextToPress() 
+    console.log(`test game inside ${testGame[color]} ${color}`)
+    let btn = document.getElementById(`${id}`)
+    btn.remove()
+    let index = id.slice(-1);// pick the number portion of the id of the dom element we are targeting
+    testGame[color].pieces[index].domID = id //save the domID of the piece to resolve same location conflicts
     
-        let i = testGame[color].lastThrow + pieceCurrentPosition
-        let lastThrow = testGame[color].lastThrow
-        testGame[color].pieces[index].stepsToFinishLine -= lastThrow
-        console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i )
-       
+    let pieceCurrentPosition = testGame[color].pieces[index].currentPosition 
+
+    let i = testGame[color].lastThrow + pieceCurrentPosition
+    let lastThrow = testGame[color].lastThrow
+    testGame[color].pieces[index].stepsToFinishLine -= lastThrow
+    console.log('this is the result of lasthrow '+ lastThrow + ' and result '+i )
+    
 
         
-        if(i >= 33){
-            //   this fails sometimes, i think is bcause it needs time to get the dom element
-            // testGame[color].pieces[index].hasLooped = true
-            
-            i = Math.abs((testGame[color].lastThrow + pieceCurrentPosition) - 32)
-                console.log(i)
-                console.log('more than 33 but no exit')
-                let destination1 = document.getElementById(`${i}`)
-                let newBtn2 = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
-                destination1.innerHTML = newBtn2
-            
-        }
+    if(i >= 33){
+        //   this fails sometimes, i think is bcause it needs time to get the dom element
+        // testGame[color].pieces[index].hasLooped = true
+        
+        i = Math.abs((testGame[color].lastThrow + pieceCurrentPosition) - 32)
+            console.log(i)
+            console.log('more than 33 but no exit')
+            let destination1 = document.getElementById(`${i}`)
+            let newBtn2 = `<button id="${id}"class="h-6 w-6 md:h-12 md:w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
+            destination1.innerHTML = newBtn2
+        
+    }
 
     // by conflics reads the id of the old object and creates a new Object piece inside the pits
 
@@ -425,7 +401,7 @@ function movePiece(id, color){
                 testGame.red.pieces.push(bouncedRed)
                 let j = testGame.red.pieces.length - 1
                 let redPitsElement = document.getElementById('red-pits-buttons')
-                let redBounced = `<button id="red-piece-${j}"class="h-12 w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
+                let redBounced = `<button id="red-piece-${j}"class="h-6 w-6 md:h-12 md:w-12 bg-red-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"red")'></button>`
                 redPitsElement.innerHTML += redBounced
                 break
             case 'b':
@@ -433,7 +409,7 @@ function movePiece(id, color){
                 testGame.blue.pieces.push(bouncedBlue)
                 let k = testGame.blue.pieces.length - 1
                 let bluePitsElement = document.getElementById('blue-pits-buttons')
-                let blueBounced = `<button id="blue-piece-${k}"class="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
+                let blueBounced = `<button id="blue-piece-${k}"class="h-6 w-6 md:h-12 md:w-12 bg-blue-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"blue")'></button>`
                 bluePitsElement.innerHTML += blueBounced
                 break
             case 'y':
@@ -441,7 +417,7 @@ function movePiece(id, color){
                 testGame.yellow.pieces.push(bouncedYellow)
                 let l = testGame.yellow.pieces.length - 1
                 let yellowPitsElement = document.getElementById('yellow-pits-buttons')
-                let yellowBounced = `<button id="yellow-piece-${l}"class="h-12 w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
+                let yellowBounced = `<button id="yellow-piece-${l}"class="h-6 w-6 md:h-12 md:w-12 bg-yellow-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"yellow")'></button>`
                 yellowPitsElement.innerHTML += yellowBounced
                 break
             case 'g':
@@ -449,7 +425,7 @@ function movePiece(id, color){
                 testGame.green.pieces.push(bouncedGreen)
                 let m = testGame.green.pieces.length - 1
                 let greenPitsElement = document.getElementById('green-pits-buttons')
-                let greenBounced = `<button id="green-piece-${m}"class="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
+                let greenBounced = `<button id="green-piece-${m}"class="h-6 w-6 md:h-12 md:w-12 bg-green-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"green")'></button>`
                 greenPitsElement.innerHTML += greenBounced
                 break
         }
@@ -458,27 +434,23 @@ function movePiece(id, color){
     }
       
 
+    let destination = document.getElementById(`${i}`)
+    let newBtn = `<button id="${id}"class="h-6 w-6 md:h-12 md:w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
+    destination.innerHTML = newBtn
+    
+    if (testGame[color].pieces[index].stepsToFinishLine < 0) {
+        console.log('this one made it to the finish line')
 
-
-
+        // switch stament with color to redraw piece is the corresponding finish line plus ++ the pieces in finish line count
+        testGame[color].finishedPieces += 1
         let destination = document.getElementById(`${i}`)
-        let newBtn = `<button id="${id}"class="h-12 w-12 bg-${color}-500 rounded-full flex items-center justify-center text-white" onclick='movePiece(this.id,"${color}")'></button>`
-        destination.innerHTML = newBtn
-        
-        if (testGame[color].pieces[index].stepsToFinishLine < 0) {
-            console.log('this one made it to the finish line')
+        destination.innerHTML = ''
+        drawPiecesThatFinished(testGame[color])
+    }
+    
 
-            // switch stament with color to redraw piece is the corresponding finish line plus ++ the pieces in finish line count
-            testGame[color].finishedPieces += 1
-            let destination = document.getElementById(`${i}`)
-            destination.innerHTML = ''
-            drawPiecesThatFinished(testGame[color])
-        }
-        
-
-        console.log('crossed the line second')
-        testGame.blocks[testGame[color].pieces[index].currentPosition] = null //set to null if we remove the piece, we should check for conflicts before doing this
-        return testGame[color].pieces[index].currentPosition = i
+    testGame.blocks[testGame[color].pieces[index].currentPosition] = null //set to null if we remove the piece, we should check for conflicts before doing this
+    return testGame[color].pieces[index].currentPosition = i
 
     
 
@@ -566,12 +538,8 @@ function setPopActiveColor(){
         'font-extrabold', 'text-white', 'uppercase', 'items-center',
         'justify-center', colorTurn)
     
-    
-    // let i = testGame.colorOrder.length -1
-    // testGame.currentTurn = testGame.colorOrder[i]//last of arr
 
 }
-
 
 
 // reads the current color and picks the next one, if is the last of the array jumps back to index-0
@@ -589,14 +557,11 @@ function getPopNextColor(){
     switch (testGame.currentTurn) {
         case 'red':
 
-
             pop.classList = ''
             pop.classList.add('center', 'flex', 'flex-col', 'w-24',
                 'md:h-64', 'h-24', 'md:w-64', 'rounded-xl', 'text-xl', 'md:text-3xl',
                 'font-extrabold', 'text-white', 'uppercase', 'items-center',
                 'justify-center', colorTurn)
-
-
 
             break
         case 'blue':
@@ -618,7 +583,6 @@ function getPopNextColor(){
 
             break
         case 'green':
-
 
             pop.classList = ''
             pop.classList.add('center', 'flex', 'flex-col', 'w-24',
